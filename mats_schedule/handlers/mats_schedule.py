@@ -1,13 +1,11 @@
 
 import json
-import logging
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, Callable, Dict, Optional, Tuple
+from typing import Any, Dict, Tuple
 
 import boto3
-import h5py  # type: ignore
 import numpy as np
 import pyarrow as pa  # type: ignore
 import pyarrow.parquet as pq  # type: ignore
@@ -16,7 +14,6 @@ import pyarrow.csv as csv  # type: ignore
 S3Client = Any
 Event = Dict[str, Any]
 Context = Any
-Getter = Callable[[h5py.File], Dict[str, np.ndarray]]
 
 
 class NothingToDo(Exception):
