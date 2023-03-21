@@ -2,7 +2,6 @@ import os
 from tempfile import TemporaryDirectory
 from unittest.mock import ANY, Mock, patch
 
-import numpy as np
 import pytest  # type: ignore
 from mats_schedule.handlers.mats_schedule import (
     download_file,
