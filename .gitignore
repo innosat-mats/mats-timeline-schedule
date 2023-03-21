@@ -1,0 +1,31 @@
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+*.egg-info/
+*.pyc
+*~
+*.log
+.cache
+.coverage*
+.eggs/
+.tox/
+__pycache__/
+coverage.xml
+pytest.xml
+/htmlcov
+.ropeproject
+.pytest_cache
+*.sw*
+*.orig
+.mypy_cache
+*.pyi
+build
+dist
+
+/.vscode
+system-tests/.X99-lock
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
