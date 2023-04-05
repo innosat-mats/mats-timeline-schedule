@@ -15,6 +15,20 @@ S3Client = Any
 Event = Dict[str, Any]
 Context = Any
 
+ScheduleSchema = {
+    "start_date": pa.timestamp("ms"),
+    "end_date": pa.timestamp("ms"),
+    "id": pa.int64(),
+    "name": pa.string(),
+    "version": pa.int64(),
+    "standard_altitude": pa.int64(),
+    "yaw_correction": pa.bool_(),
+    "pointing_altitudes": pa.string(),
+    "xml_file": pa.string(),
+    "description_short": pa.string(),
+    "description_long": pa.string(),
+}
+
 
 class NothingToDo(Exception):
     pass
@@ -72,7 +86,10 @@ def lambda_handler(event: Event, context: Context):
     try:
         s3_client = boto3.client('s3')
         csv_path = download_file(s3_client, in_bucket, object, tempdir)
-        table = csv.read_csv(csv_path)
+        table = csv.read_csv(
+            csv_path,
+            convert_options=csv.ConvertOptions(column_types=ScheduleSchema),
+        )
     except Exception as err:
         msg = f"Could not get object {object} from {in_bucket}: {err}"
         raise MatsScheduleException(msg) from err
