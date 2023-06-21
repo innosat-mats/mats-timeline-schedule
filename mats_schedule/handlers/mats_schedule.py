@@ -23,7 +23,7 @@ ScheduleSchema = {
     "version": pa.int64(),
     "standard_altitude": pa.int64(),
     "yaw_correction": pa.bool_(),
-    "pointing_altitudes": pa.string(),
+    "pointing_altitudes": pa.list_(pa.int64()),
     "xml_file": pa.string(),
     "description_short": pa.string(),
     "description_long": pa.string(),

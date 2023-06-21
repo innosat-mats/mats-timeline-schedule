@@ -10,7 +10,7 @@ MatsScheduleStack(
     app,
     "MatsScheduleToParquetStack",
     input_bucket_name="ops-mats-schedule-source-v0.1",
-    output_bucket_name="ops-mats-schedule-v0.1",
+    output_bucket_name="ops-mats-schedule-v0.2",
     queue_arn_export_name="L0ScheduleFetcherStackOutputQueue",
 )
 
