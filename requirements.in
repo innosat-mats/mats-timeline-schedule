@@ -3,6 +3,6 @@ aws-cdk.aws-lambda-python-alpha
 boto3
 constructs
 pyarrow
-numpy
 types-boto3
 types-botocore
+pandas
