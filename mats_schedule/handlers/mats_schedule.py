@@ -6,7 +6,6 @@ from tempfile import TemporaryDirectory
 from typing import Any, Dict, Tuple
 
 import boto3
-import numpy as np
 import pyarrow as pa  # type: ignore
 import pyarrow.parquet as pq  # type: ignore
 import pyarrow.csv as csv  # type: ignore
@@ -23,7 +22,7 @@ ScheduleSchema = {
     "version": pa.int64(),
     "standard_altitude": pa.int64(),
     "yaw_correction": pa.bool_(),
-    "pointing_altitudes": pa.list_(pa.int64()),
+    "pointing_altitudes": pa.string(),
     "xml_file": pa.string(),
     "description_short": pa.string(),
     "description_long": pa.string(),
@@ -51,15 +50,6 @@ def parse_event_message(event: Event) -> Tuple[str, str]:
     object = message["object"]
     bucket = message["bucket"]
     return object, bucket
-
-
-def get_partitioned_dates(datetimes: np.ndarray) -> Dict[str, np.ndarray]:
-    Y, M, D = [datetimes.astype(f"M8[{x}]") for x in "YMD"]
-    return {
-        "year": Y.astype(int) + 1970,
-        "month": (M - Y + 1).astype(int),
-        "day": (D - M + 1).astype(int),
-    }
 
 
 def download_file(
@@ -90,13 +80,21 @@ def lambda_handler(event: Event, context: Context):
             csv_path,
             convert_options=csv.ConvertOptions(column_types=ScheduleSchema),
         )
+        data = table.to_pandas()
+        data["pointing_altitudes"] = data.apply(
+            lambda s: [
+                int(v) for v in s.pointing_altitudes[1:-1].split(",") if v
+            ],
+            axis=1,
+        )
+        out_table = pa.Table.from_pandas(data)
     except Exception as err:
         msg = f"Could not get object {object} from {in_bucket}: {err}"
         raise MatsScheduleException(msg) from err
 
     try:
         pq.write_to_dataset(
-            table=table,
+            table=out_table,
             root_path=out_bucket,
             basename_template=get_filename(object),
             existing_data_behavior="overwrite_or_ignore",
