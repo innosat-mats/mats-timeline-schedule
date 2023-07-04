@@ -82,7 +82,9 @@ def lambda_handler(event: Event, context: Context):
         )
         data = table.to_pandas()
         data["pointing_altitudes"] = data.apply(
-            lambda s: eval(s.pointing_altitudes),
+            lambda s: [
+                int(v) for v in s.pointing_altitudes[1:-1].split(",") if v
+            ],
             axis=1,
         )
         out_table = pa.Table.from_pandas(data)
